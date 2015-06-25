@@ -3,6 +3,7 @@ package tz.pgraphic.components;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import tz.pgraphic.G;
 import tz.pgraphic.components.api.GComponent;
 import tz.pgraphic.components.api.GTransition;
 
@@ -55,9 +56,17 @@ public class GField extends GComponent {
 	 */
 	@Override
 	public void render(Graphics g) {
+		super.render(g);
+		this.render(g, G.state().translateX + this.x.getInt(), G.state().translateY + this.y.getInt());
+	}
+	
+	/* 
+	 * @see tz.pgraphic.components.api.GComponent#render(java.awt.Graphics)
+	 */
+	public void render(Graphics g, int x, int y) {
 		g.setColor(Color.CYAN);
-		g.drawRect(this.x.getInt(), this.y.getInt(), this.width.getInt(), this.height.getInt());
-		g.drawArc(this.x.getInt() + this.width.getInt() / 2 - this.width.getInt() / 8, this.y.getInt() + this.height.getInt() / 2 - this.height.getInt() / 8, this.width.getInt() / 4, this.height.getInt() / 4, 360 - this.loader.getInt(), 90);
+		g.drawRect(x, y, this.width.getInt(), this.height.getInt());
+		g.drawArc(x + this.width.getInt() / 2 - this.width.getInt() / 8, y + this.height.getInt() / 2 - this.height.getInt() / 8, this.width.getInt() / 4, this.height.getInt() / 4, 360 - this.loader.getInt(), 90);
 	}
 	
 }

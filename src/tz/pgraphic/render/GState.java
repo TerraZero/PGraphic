@@ -19,9 +19,13 @@ public class GState {
 
 	public String name;
 	private List<GComponent> components;
+	public int translateX;
+	public int translateY;
 	
 	public GState(String name) {
 		this.name = name;
+		this.translateX = 0;
+		this.translateY = 0;
 		this.components = new ArrayList<GComponent>();
 	}
 	
