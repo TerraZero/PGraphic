@@ -14,9 +14,13 @@ import java.awt.event.MouseEvent;
  */
 public class GMouseActions {
 
-	private MouseEvent pressed;
-	private MouseEvent released;
-	private MouseEvent moved;
+	public MouseEvent pressed;
+	public MouseEvent released;
+	public MouseEvent moved;
+	
+	public MouseEvent oldPressed;
+	public MouseEvent oldReleased;
+	public MouseEvent oldMoved;
 	
 	public void set(MouseEvent event) {
 		switch (event.getID()) {
@@ -33,6 +37,10 @@ public class GMouseActions {
 	}
 	
 	public void clear() {
+		this.oldPressed = this.pressed;
+		this.oldReleased = this.released;
+		this.oldMoved = this.moved;
+		
 		this.pressed = null;
 		this.released = null;
 		this.moved = null;

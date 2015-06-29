@@ -18,6 +18,8 @@ import java.awt.event.MouseEvent;
  */
 public class GActions implements AWTEventListener {
 	
+	public GMouseActions mouse;
+	
 	public GActions() {
 		Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK + AWTEvent.MOUSE_EVENT_MASK + AWTEvent.MOUSE_MOTION_EVENT_MASK);
 	}
@@ -30,7 +32,7 @@ public class GActions implements AWTEventListener {
 		if (event instanceof KeyEvent) {
 			
 		} else if (event instanceof MouseEvent) {
-			
+			this.mouse.set((MouseEvent)event);
 		}
 	}
 	
