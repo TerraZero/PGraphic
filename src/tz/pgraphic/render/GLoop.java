@@ -1,6 +1,8 @@
 package tz.pgraphic.render;
 
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import tz.pgraphic.G;
 import tz.pgraphic.components.api.GComponent;
@@ -17,17 +19,38 @@ import tz.pgraphic.components.api.GComponent;
  */
 public class GLoop {
 	
-	protected float deltaTime;
+	public Thread thread;
 	
-	protected boolean stop;
+	private float deltaTime;
+	
+	private boolean stop;
+	
+	private Object sync;
+	private Object syncLoop;
+	private boolean interrupt;
 	
 	public GLoop() {
 		this.deltaTime = 1000f / 60f;
+		this.sync = new Object();
+		this.syncLoop = new Object();
+		this.interrupt = false;
+		G.frame.addComponentListener(new ComponentAdapter() {
+			
+			public void componentShown(ComponentEvent e) {
+				GLoop.this.start();
+			}
+			
+		});
 	}
 	
 	public void start() {
-		this.loop();
-		this.exit();
+		if (this.thread == null) {
+			this.thread = new Thread(() -> {
+				GLoop.this.loop();
+				GLoop.this.exit();
+			});
+			this.thread.start();
+		}
 	}
 	
 	public void exit() {
@@ -41,16 +64,41 @@ public class GLoop {
 		float delta = 0;
 		
 		while (!this.stop) {
-			nextTime = System.currentTimeMillis();
-			frameTime = nextTime - current;
-			current = nextTime;
-			
-			while (frameTime > 0) {
-				delta = (frameTime > this.deltaTime ? this.deltaTime : frameTime);
-				this.update(delta);
-				frameTime -= delta;
+			synchronized (this.sync) {
+				if (this.interrupt) {
+					try {
+						this.sync.wait();
+					} catch (InterruptedException e) {
+						System.out.println(e);
+					}
+				}
 			}
-			this.render();
+			synchronized (this.syncLoop) {
+				nextTime = System.currentTimeMillis();
+				frameTime = nextTime - current;
+				current = nextTime;
+				
+				while (frameTime > 0) {
+					delta = (frameTime > this.deltaTime ? this.deltaTime : frameTime);
+					this.update(delta);
+					frameTime -= delta;
+				}
+				this.render();
+			}
+		}
+	}
+	
+	public void interrupt(boolean interrupt) {
+		if (this.interrupt != interrupt) {
+			G.canvas.interruptHook(interrupt);
+			synchronized (this.syncLoop) {
+				this.interrupt = interrupt;
+			}
+			if (!this.interrupt) {
+				synchronized (this.sync) {
+					this.sync.notifyAll();
+				}
+			}
 		}
 	}
 	

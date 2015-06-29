@@ -5,7 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferStrategy;
+
+import tz.pgraphic.G;
 
 /**
  * 
@@ -38,6 +42,17 @@ public class GCanvas extends Canvas {
 	
 	protected void init() {
 		this.setBackground(Color.BLACK);
+		G.frame.addComponentListener(new ComponentAdapter() {
+			
+			public void componentShown(ComponentEvent e) {
+				GCanvas.this.createBuffer();
+			}
+			
+			public void componentResized(ComponentEvent e) {
+				GCanvas.this.setSize(G.frame.getWidth(), G.frame.getHeight());
+			}
+			
+		});
 	}
 	
 	public void createBuffer() {
@@ -56,6 +71,12 @@ public class GCanvas extends Canvas {
 	
 	public void show() {
 		this.bs.show();
+	}
+	
+	public void interruptHook(boolean interrupt) {
+		if (!interrupt) {
+			this.createBuffer();
+		}
 	}
 	
 }

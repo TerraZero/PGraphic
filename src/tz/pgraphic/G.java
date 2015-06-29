@@ -7,6 +7,7 @@ import tz.pgraphic.render.GFrame;
 import tz.pgraphic.render.GLoop;
 import tz.pgraphic.render.GCanvas;
 import tz.pgraphic.render.GState;
+import tz.pgraphic.sio.GSIO;
 
 /**
  * 
@@ -30,19 +31,20 @@ public class G {
 	}
 
 	public static void init() {
-		G.loop = new GLoop();
+		GSIO.init();
 		G.frame = new GFrame();
 		G.canvas = new GCanvas();
+		G.loop = new GLoop();
+		G.frame.add(G.canvas);
 		G.states = new ArrayList<GState>();
 		G.states.add(new GState("main"));
 	}
 	
 	public static void show() {
-		G.frame.add(G.canvas);
 		G.frame.setVisible(true);
 		
-		G.canvas.createBuffer();
-		G.canvas.setSize(G.frame.getWidth(), G.frame.getHeight());
+//		G.canvas.createBuffer();
+//		G.canvas.setSize(G.frame.getWidth(), G.frame.getHeight());
 	}
 	
 	public static GState state() {
